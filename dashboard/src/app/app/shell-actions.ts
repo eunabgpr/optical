@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { BRANCH_COOKIE, clearSessionCookie, getSession, getBranchContext } from "@/server/auth/session";
+import { env } from "@/server/env";
 import { destroySession } from "@/server/services/auth";
 
 export async function signOutAction() {
@@ -22,5 +23,5 @@ export async function setBranchAction(branchId: string | null) {
   }
   const { branches } = await getBranchContext(session.business.id);
   if (!branches.some((b) => b.id === branchId)) return; // ignore branches from other businesses
-  jar.set(BRANCH_COOKIE, branchId, { httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 180 });
+  jar.set(BRANCH_COOKIE, branchId, { httpOnly: true, sameSite: "lax", path: "/", secure: new URL(env().APP_URL).protocol === "https:", maxAge: 60 * 60 * 24 * 180 });
 }

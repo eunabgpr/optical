@@ -5,12 +5,15 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { Permission } from "@/lib/permissions";
 import { getDb } from "@/server/db";
+import { env } from "@/server/env";
 import { clientIp } from "@/server/http";
 import { branches } from "@/server/db/schema";
 import { resolveSession, type SessionInfo } from "@/server/services/auth";
 
 export const SESSION_COOKIE = "specta_session";
 export const BRANCH_COOKIE = "specta_branch";
+
+const secureCookies = () => new URL(env().APP_URL).protocol === "https:";
 
 export async function requestMeta() {
   const h = await headers();
@@ -53,7 +56,7 @@ export const getBranchContext = cache(async (businessId: string) => {
 export async function setSessionCookie(token: string, expiresAt: Date) {
   (await cookies()).set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: secureCookies(),
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
