@@ -14,6 +14,9 @@ export const SESSION_COOKIE = "specta_session";
 export const BRANCH_COOKIE = "specta_branch";
 
 const secureCookies = () => new URL(env().APP_URL).protocol === "https:";
+// The dashboard can be embedded in the separate GoHighLevel website. Secure
+// cross-site cookies are required for navigations and server actions in that iframe.
+export const sessionCookieSameSite = (): "none" | "lax" => (secureCookies() ? "none" : "lax");
 
 export async function requestMeta() {
   const h = await headers();
@@ -57,7 +60,7 @@ export async function setSessionCookie(token: string, expiresAt: Date) {
   (await cookies()).set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: secureCookies(),
-    sameSite: "lax",
+    sameSite: sessionCookieSameSite(),
     path: "/",
     expires: expiresAt,
   });

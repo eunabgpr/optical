@@ -46,6 +46,7 @@ DEMO_MODE=false npm run setup:business -- --name "…" --owner-email … --owner
   - `.vercelignore` keeps `.data/`, env files and test artefacts out of uploads.
   - Database setup, migrations and backups: [PRODUCTION_DATABASE.md](PRODUCTION_DATABASE.md).
 - **Several instances**: login throttling, public-API rate limits, and every idempotency and sync guarantee are stored in PostgreSQL, so they work across instances.
+- **Embedded dashboard**: when the dashboard is embedded in a separate GoHighLevel site, serve it over HTTPS so its cross-site session cookies can be sent by the iframe.
 - **Customer website**: a separate Next.js project (`optical-customer-website`). It reads `/api/public/v1` with a site key ([PUBLIC_API.md](PUBLIC_API.md)) and never connects to PostgreSQL.
 - **Backups**: rely on the database provider's point-in-time recovery. Financial records are never hard-deleted by the app, so a restore is the only way data disappears.
 
